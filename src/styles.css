@@ -1,363 +1,80 @@
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-}
+:root{--bg:#c9c9cc;--card:#e4e4e6;--ink:#111;--mut:#6b6b70}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+.bento{display:grid;grid-template-columns:1fr 360px;gap:14px;padding:14px;height:100vh}
+.bento>.left,.bento>.right{min-height:0}
+.left{position:relative}
+.bg{position:absolute;inset:0}
+.stage-bg{clip-path:url(#cStage);background:radial-gradient(120% 90% at 50% 35%,#4b5568 0%,#16181d 55%,#07080a 100%)}
+.viewer{position:absolute;inset:0;cursor:grab;touch-action:none}
+.viewer canvas{display:block;width:100% !important;height:100% !important}
+.hint{display:none}
 
-body {
-    background-color: #0c0c0e;
-    color: #f1f1f3;
-    overflow: hidden;
-}
+/* éléments ronds */
+.round{display:flex;align-items:center;justify-content:center;border:0;border-radius:50%;cursor:pointer;font-size:18px}
+.round.white{background:#f1f1f2;color:#111}
+.round.black{background:#0b0b0c;color:#fff}
+.round.big{position:absolute;left:27%;bottom:2%;width:66px;height:66px;flex-direction:column;gap:0;box-shadow:0 6px 18px rgba(0,0,0,.18);z-index:3}
+.round.big .ic{font-size:22px;line-height:1}
+.round.big .lb{font-size:10px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-top:2px}
+.round:disabled{opacity:.35;cursor:default}
 
-.bento-layout {
-    display: flex;
-    height: 100vh;
-    width: 100vw;
-    padding: 16px;
-    gap: 16px;
-    background: #141416;
-}
+/* pills dans l'encoche du haut */
+.pill{border:0;border-radius:999px;padding:12px 22px;background:#ececee;color:var(--ink);font:500 15px system-ui,sans-serif;cursor:pointer}
+.pill.on,.pill.sm.on{background:#0b0b0c;color:#fff}
+.pill.sm{padding:10px 18px;font-size:14px;background:#f6f6f7}
+.pillsL{position:absolute;top:2.2%;left:2.2%;display:flex;flex-wrap:wrap;gap:10px;max-width:27%;z-index:2}
+.pillsR{position:absolute;top:2.2%;right:2.6%;z-index:2}
+.capsule{position:absolute;top:1.4%;left:50%;transform:translateX(-50%);width:27%;height:58px;display:flex;align-items:center;gap:20px;padding:0 6px;border:0;border-radius:999px;background:#0b0b0c;color:#bbb;font-size:15px;cursor:pointer;z-index:2}
+.capsule .round{width:46px;height:46px}
 
-/* Barre latérale gauche minimaliste */
-.bento-sidebar {
-    width: 70px;
-    background: #1c1c21;
-    border-radius: 24px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 24px 0;
-    justify-content: space-between;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-}
+/* card dans le creux bas-gauche */
+.colorsCard{position:absolute;left:0;bottom:0;width:24.5%;height:36%;border-radius:46px 46px 46px 46px;background:var(--card);padding:20px 22px;z-index:2;overflow:hidden}
+.colorsCard h3,.bonus h3{margin:0 0 12px;font-size:20px;font-weight:700;letter-spacing:.02em}
+.colorsIn{display:flex;gap:10px;background:#d3d3d6;border-radius:30px;padding:12px}
+.colorsIn label{flex:1;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut)}
+input[type=color]{display:block;width:100%;height:46px;margin-top:6px;border:0;border-radius:18px;background:#f6f6f7;padding:4px;cursor:pointer}
+.tag{position:absolute;right:16px;top:14px;width:48px;height:48px;font-size:12px}
 
-.brand-logo {
-    font-size: 24px;
-    color: #fff;
-}
+/* verre dépoli */
+.glassWrap{position:absolute;left:30.5%;right:2.2%;bottom:3%;height:34%;z-index:2}
+.glass-bg{clip-path:url(#cGlass);background:rgba(235,235,238,.3);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.glassIn{position:absolute;inset:0;padding:22px 30px 22px 56px;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;color:#fff}
+.gTitle{font-size:24px;font-weight:600;letter-spacing:.02em;margin-bottom:14px}
+.sliders{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.sliders label{font-size:11px;text-transform:uppercase;letter-spacing:.1em;opacity:.9}
+input[type=range]{width:100%;accent-color:#fff;margin-top:8px}
+.sw{display:grid;grid-template-columns:repeat(4,40px);gap:8px}
+.sw span{width:40px;height:40px;border-radius:50%;border:3px solid rgba(255,255,255,.7);cursor:pointer}
 
-.nav-icons {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
+/* droite */
+.right{display:grid;grid-template-rows:1.5fr 1fr;gap:14px}
+.frame{position:relative;min-height:0}
+.frame-bg{clip-path:url(#cFrame);background:var(--card)}
+.notch{position:absolute;left:10px;top:6px;width:54px;height:54px;z-index:2}
+.frameIn{position:absolute;inset:0;padding:12px 20px 20px;display:flex;flex-direction:column;gap:12px}
+h2{margin:0 0 0 76px;font-size:24px;font-weight:600;line-height:36px;height:36px}
+.frameIn textarea{margin-top:22px}
+textarea,select{width:100%;border:0;border-radius:24px;background:#f6f6f7;color:var(--ink);padding:14px 16px;font-size:16px;font-family:inherit}
+textarea{flex:1;min-height:70px;resize:none;font-weight:600}
+.blackCard{background:#0b0b0c;color:#ddd;border-radius:34px 34px 34px 34px;padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+.blackCard select{background:#1d1d20;color:#fff}
+.sample{font-size:28px;color:#fff;text-align:center}
+.bonus{background:var(--card);border-radius:60px 36px 52px 40px;padding:20px;display:flex;flex-direction:column;min-height:0}
+.bonus h3{text-align:center}
+.bonusIn{flex:1;background:#d3d3d6;border-radius:34px;padding:16px;display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:8px}
 
-.icon-btn {
-    background: transparent;
-    border: none;
-    color: #8e8e93;
-    font-size: 20px;
-    cursor: pointer;
-    padding: 10px;
-    border-radius: 14px;
-    transition: 0.2s;
-}
-
-.icon-btn.active, .icon-btn:hover {
-    background: rgba(255, 255, 255, 0.08);
-    color: #fff;
-}
-
-.user-avatar img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-/* Grille Principale */
-.bento-main-grid {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.bento-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #1c1c21;
-    padding: 12px 20px;
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.pill-nav {
-    display: flex;
-    gap: 8px;
-}
-
-.pill {
-    background: transparent;
-    border: none;
-    color: #8e8e93;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 14px;
-    cursor: pointer;
-    font-weight: 500;
-}
-
-.pill.active {
-    background: #ffffff;
-    color: #000000;
-}
-
-.search-pill {
-    color: #8e8e93;
-    font-size: 13px;
-    background: rgba(255, 255, 255, 0.03);
-    padding: 8px 14px;
-    border-radius: 12px;
-}
-
-/* Zone de contenu central */
-.bento-content-area {
-    flex: 1;
-    display: grid;
-    grid-template-columns: 380px 1fr;
-    gap: 16px;
-    min-height: 0;
-}
-
-.bento-card {
-    background: #1c1c21;
-    border-radius: 24px;
-    padding: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    overflow-y: auto;
-}
-
-.control-panel h2 {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 4px;
-}
-
-label {
-    font-size: 12px;
-    color: #8e8e93;
-    font-weight: 500;
-    display: block;
-    margin-bottom: 4px;
-}
-
-input[type="text"], textarea, select {
-    width: 100%;
-    background: rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    padding: 10px;
-    color: #fff;
-    font-size: 14px;
-    outline: none;
-}
-
-textarea { resize: none; }
-
-.tabs {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-}
-
-.tabs button {
-    background: rgba(255, 255, 255, 0.05);
-    border: none;
-    color: #aaa;
-    padding: 6px 12px;
-    border-radius: 10px;
-    font-size: 12px;
-    cursor: pointer;
-}
-
-.tabs button.on {
-    background: #d4a95a;
-    color: #000;
-    font-weight: 600;
-}
-
-.add-btn {
-    background: rgba(212, 169, 90, 0.2) !important;
-    color: #d4a95a !important;
-}
-
-.row-group {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-}
-
-.shapes {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 4px;
-}
-
-.shapes button {
-    background: rgba(255, 255, 255, 0.05);
-    border: none;
-    color: #ccc;
-    padding: 6px;
-    border-radius: 8px;
-    font-size: 11px;
-    cursor: pointer;
-}
-
-.shapes button.on {
-    background: #fff;
-    color: #000;
-}
-
-.sliders-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-}
-
-input[type="range"] {
-    width: 100%;
-    accent-color: #d4a95a;
-}
-
-.swatches {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-}
-
-.swatches span {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    cursor: pointer;
-    border: 2px solid transparent;
-}
-
-.swatches span.active-swatch {
-    border-color: #fff;
-}
-
-.color-picker-input {
-    width: 28px;
-    height: 28px;
-    border: none;
-    border-radius: 50%;
-    background: none;
-    cursor: pointer;
-}
-
-.del-btn {
-    background: rgba(255, 59, 48, 0.15);
-    color: #ff3b30;
-    border: none;
-    padding: 10px;
-    border-radius: 12px;
-    font-size: 13px;
-    cursor: pointer;
-    font-weight: 500;
-}
-
-/* Visionneuse 3D Card */
-.viewer-card {
-    padding: 0;
-    position: relative;
-    overflow: hidden;
-    background: radial-gradient(circle at center, #26262e 0%, #161619 100%);
-}
-
-.viewer-container {
-    width: 100%;
-    height: 100%;
-    position: relative;
-}
-
-.viewer-hint {
-    position: absolute;
-    bottom: 16px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(8px);
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 12px;
-    color: #aaa;
-    pointer-events: none;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-/* Panneau de droite (Bento stats) */
-.bento-right-sidebar {
-    width: 280px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.stat-card {
-    background: #1c1c21;
-}
-
-.stat-header {
-    font-size: 13px;
-    color: #8e8e93;
-}
-
-.stat-number {
-    font-size: 28px;
-    font-weight: 700;
-    color: #fff;
-    margin-top: 4px;
-}
-
-.stat-desc {
-    font-size: 12px;
-    color: #8e8e93;
-}
-
-.mini-chart {
-    display: flex;
-    align-items: flex-end;
-    gap: 8px;
-    height: 60px;
-    margin-top: 10px;
-}
-
-.mini-chart .bar {
-    flex: 1;
-    background: #d4a95a;
-    border-radius: 4px 4px 0 0;
-    opacity: 0.8;
-}
-
-.promo-card {
-    background: linear-gradient(135deg, #25252b 0%, #18181c 100%);
-    justify-content: space-between;
-}
-
-.promo-card h3 {
-    font-size: 15px;
-}
-
-.promo-card p {
-    font-size: 12px;
-    color: #8e8e93;
-}
-
-.cta-btn {
-    background: #fff;
-    color: #000;
-    border: none;
-    padding: 10px;
-    border-radius: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    font-size: 13px;
+@media(max-width:900px){
+    .bento{grid-template-columns:1fr;height:auto}
+    .left{height:auto;display:flex;flex-direction:column;gap:12px}
+    .left>*{position:relative !important;inset:auto !important;transform:none !important;width:auto !important;height:auto !important;max-width:none !important}
+    .stage-bg{height:70vh}
+    .capsule{height:58px}
+    .colorsCard{padding:18px}
+    .glassWrap{min-height:230px;background:#2a2a30;border-radius:36px;color:#fff}
+    .glass-bg{display:none}
+    .glassIn{position:relative;padding:20px;grid-template-columns:1fr}
+    .round.big{display:none}
+    .right{grid-template-rows:auto;}
+    .frame{height:480px}.bonus{min-height:200px}
 }
